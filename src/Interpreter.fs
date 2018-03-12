@@ -184,7 +184,7 @@ let rec evalExp (e : UntypedExp, vtab : VarTable, ftab : FunTable) : Value =
               | BoolVal false -> BoolVal(false)
               | BoolVal true -> BoolVal(true)
               | _ -> invalidOperands "Invalid equality operand types" [(Int, Int); (Bool, Bool); (Char, Char)] res1 res2 pos
-          //| _ -> raise(MyError("Invalid type for and ", pos))
+          | _ -> raise(MyError("Invalid type for and ", pos))
         //failwith "Unimplemented interpretation of &&"
   | Or (e1, e2, pos) ->
         let res1 = evalExp(e1, vtab, ftab)
@@ -195,8 +195,8 @@ let rec evalExp (e : UntypedExp, vtab : VarTable, ftab : FunTable) : Value =
             match res2 with
               | BoolVal false -> BoolVal(false)
               | BoolVal true -> BoolVal(true)
-              | _ -> invalidOperands "Invalid equality operand types" [(Int, Int); (Bool, Bool); (Char, Char)] res1 res2 pos
-          //| _ -> invalidOperands "Invalid equality operand types for or"
+              |_ -> invalidOperands "Invalid equality operand types" [(Int, Int); (Bool, Bool); (Char, Char)] res1 res2 pos
+          //| (_, _) -> invalidOperands "Invalid equality operand types for or"
               //failwith "Unimplemented interpretation of ||"
   | Not(e1, pos) ->
           let r1 = evalExp(e1, vtab, ftab)
@@ -302,16 +302,20 @@ let rec evalExp (e : UntypedExp, vtab : VarTable, ftab : FunTable) : Value =
          a meaningful message).
   *)
   | Replicate (n, a, tp, pos) ->
-        (*let ne = evalExp(n, vtab, ftab)
+        let ne = evalExp(n, vtab, ftab)
         let ee = evalExp(a, vtab, ftab)
         match ne with
           | IntVal size ->
               if size >= 0 then
-                  ArrayVal( List.map (fun x -> x) [ee], tp )
+                 let replicated_list = [for i in 1 .. size do yield (ee)]
+                 match ee with
+                 | BoolVal _ -> ArrayVal (replicated_list, Bool)
+                 | CharVal _ -> ArrayVal (replicated_list, Char)
+                 | IntVal  _ -> ArrayVal (replicated_list, Int)
               else let msg = sprintf "Error: In Replicate call, size is negative: %i" size
                    raise (MyError(msg, pos))
-          | _ -> raise (MyError("Replicate argument is not a number: "+ppVal 0 ne, pos)) *)
-        failwith "Unimplemented interpretation of replicate"
+          | _ -> raise (MyError("Replicate argument is not a number: "+ppVal 0 ne, pos))
+        //failwith "Unimplemented interpretation of replicate"
 
   (* TODO project task 2: `filter(p, arr)`
        pattern match the implementation of map:

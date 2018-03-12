@@ -48,7 +48,7 @@ let parse_error_rich =
 // Adding multiplication and division
 %token <(int*int)> MULT DIV
 
-%token <(int*int)> DEQ LTH EQ OP MAP REDUCE IOTA ARROW REPLICATE
+%token <(int*int)> DEQ LTH EQ OP MAP REDUCE IOTA ARROW REPLICATE SCAN
 %token <(int*int)> FUN FN COMMA SEMICOLON READ WRITE
 %token <(int*int)> LPAR RPAR LBRACKET RBRACKET LCURLY RCURLY
 
@@ -146,6 +146,10 @@ Exp : NUM            { Constant (IntVal  (fst $1), snd $1) }
                      { Reduce ($3, $5, $7, (), $1) }
     | REDUCE LPAR OP BinOp COMMA Exp COMMA Exp RPAR
                      { Reduce ($4, $6, $8, (), $1) }
+    | SCAN LPAR FunArg COMMA Exp COMMA Exp RPAR
+                     { Scan ($3, $5, $7, (), $1) }
+    | SCAN LPAR OP BinOp COMMA Exp COMMA Exp RPAR
+                     { Scan ($4, $6, $8, (), $1) }
     | REPLICATE LPAR Exp COMMA Exp RPAR
                      { Replicate ($3, $5, (), $1)}
     | LPAR Exp RPAR  { $2 }
