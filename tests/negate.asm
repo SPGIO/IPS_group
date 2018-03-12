@@ -62,17 +62,17 @@ main:
 	sw	$17, -12($29)
 	sw	$16, -8($29)
 	addi	$29, $29, -20
-	ori	$11, $0, 3
+	ori	$10, $0, 3
 # was:	ori	_divide_L_14_, 0, 3
-	ori	$10, $0, 2
+	ori	$11, $0, 2
 # was:	ori	_divide_R_15_, 0, 2
-	div	$11, $11, $10
+	div	$10, $10, $11
 # was:	div	_eq_L_12_, _divide_L_14_, _divide_R_15_
-	ori	$10, $0, 1
+	ori	$11, $0, 1
 # was:	ori	_eq_R_13_, 0, 1
 	ori	$2, $0, 0
 # was:	ori	_arg_11_, 0, 0
-	bne	$11, $10, _false_16_
+	bne	$10, $11, _false_16_
 # was:	bne	_eq_L_12_, _eq_R_13_, _false_16_
 	ori	$2, $0, 1
 # was:	ori	_arg_11_, 0, 1
@@ -80,7 +80,7 @@ _false_16_:
 # 	ori	2,_arg_11_,0
 	jal	write_nl
 # was:	jal	write_nl, 2
-	ori	$16, $2, 0
+	ori	$18, $2, 0
 # was:	ori	_letBind_10_, 2, 0
 	ori	$11, $0, 3
 # was:	ori	_Not_L_23_, 0, 3
@@ -90,17 +90,17 @@ _false_16_:
 # was:	add	_divide_L_21_, _Not_L_23_, 1
 	ori	$11, $0, 2
 # was:	ori	_divide_R_22_, 0, 2
-	div	$11, $10, $11
+	div	$10, $10, $11
 # was:	div	_eq_L_19_, _divide_L_21_, _divide_R_22_
 	ori	$12, $0, 2
 # was:	ori	_Not_L_24_, 0, 2
-	xori	$10, $12, 1
+	xori	$11, $12, 1
 # was:	xori	_eq_R_20_, _Not_L_24_, 1
-	add	$10, $12, $1
+	add	$11, $12, $1
 # was:	add	_eq_R_20_, _Not_L_24_, 1
 	ori	$2, $0, 0
 # was:	ori	_arg_18_, 0, 0
-	bne	$11, $10, _false_25_
+	bne	$10, $11, _false_25_
 # was:	bne	_eq_L_19_, _eq_R_20_, _false_25_
 	ori	$2, $0, 1
 # was:	ori	_arg_18_, 0, 1
@@ -110,25 +110,25 @@ _false_25_:
 # was:	jal	write_nl, 2
 	ori	$17, $2, 0
 # was:	ori	_letBind_17_, 2, 0
-	ori	$11, $0, 3
+	ori	$10, $0, 3
 # was:	ori	_divide_L_30_, 0, 3
-	ori	$10, $0, 2
+	ori	$11, $0, 2
 # was:	ori	_Not_L_32_, 0, 2
-	xori	$12, $10, 1
+	xori	$12, $11, 1
 # was:	xori	_divide_R_31_, _Not_L_32_, 1
-	add	$12, $10, $1
+	add	$12, $11, $1
 # was:	add	_divide_R_31_, _Not_L_32_, 1
-	div	$10, $11, $12
+	div	$11, $10, $12
 # was:	div	_eq_L_28_, _divide_L_30_, _divide_R_31_
 	ori	$12, $0, 2
 # was:	ori	_Not_L_33_, 0, 2
-	xori	$11, $12, 1
+	xori	$10, $12, 1
 # was:	xori	_eq_R_29_, _Not_L_33_, 1
-	add	$11, $12, $1
+	add	$10, $12, $1
 # was:	add	_eq_R_29_, _Not_L_33_, 1
 	ori	$2, $0, 0
 # was:	ori	_arg_27_, 0, 0
-	bne	$10, $11, _false_34_
+	bne	$11, $10, _false_34_
 # was:	bne	_eq_L_28_, _eq_R_29_, _false_34_
 	ori	$2, $0, 1
 # was:	ori	_arg_27_, 0, 1
@@ -136,7 +136,7 @@ _false_34_:
 # 	ori	2,_arg_27_,0
 	jal	write_nl
 # was:	jal	write_nl, 2
-	ori	$18, $2, 0
+	ori	$16, $2, 0
 # was:	ori	_letBind_26_, 2, 0
 	ori	$11, $0, 3
 # was:	ori	_Not_L_41_, 0, 3
@@ -144,13 +144,13 @@ _false_34_:
 # was:	xori	_divide_L_39_, _Not_L_41_, 1
 	add	$10, $11, $1
 # was:	add	_divide_L_39_, _Not_L_41_, 1
-	ori	$12, $0, 2
+	ori	$11, $0, 2
 # was:	ori	_Not_L_42_, 0, 2
-	xori	$11, $12, 1
+	xori	$12, $11, 1
 # was:	xori	_divide_R_40_, _Not_L_42_, 1
-	add	$11, $12, $1
+	add	$12, $11, $1
 # was:	add	_divide_R_40_, _Not_L_42_, 1
-	div	$11, $10, $11
+	div	$11, $10, $12
 # was:	div	_eq_L_37_, _divide_L_39_, _divide_R_40_
 	ori	$10, $0, 1
 # was:	ori	_eq_R_38_, 0, 1
@@ -169,7 +169,9 @@ _false_43_:
 # 	ori	_and_r_50_,_letBind_17_,0
 	ori	$10, $0, 0
 # was:	ori	_and_l_47_, 0, 0
-	bne	$16, $17, _false_51_
+	bne	$18, $1, _false_51_
+# was:	bne	_and_l_49_, 1, _false_51_
+	bne	$18, $17, _false_51_
 # was:	bne	_and_l_49_, _and_r_50_, _false_51_
 	ori	$10, $0, 1
 # was:	ori	_and_l_47_, 0, 1
@@ -177,7 +179,9 @@ _false_51_:
 # 	ori	_and_r_48_,_letBind_26_,0
 	ori	$11, $0, 0
 # was:	ori	_and_l_45_, 0, 0
-	bne	$10, $18, _false_52_
+	bne	$10, $1, _false_52_
+# was:	bne	_and_l_47_, 1, _false_52_
+	bne	$10, $16, _false_52_
 # was:	bne	_and_l_47_, _and_r_48_, _false_52_
 	ori	$11, $0, 1
 # was:	ori	_and_l_45_, 0, 1
@@ -185,6 +189,8 @@ _false_52_:
 # 	ori	_and_r_46_,_letBind_35_,0
 	ori	$10, $0, 0
 # was:	ori	_arg_44_, 0, 0
+	bne	$11, $1, _false_53_
+# was:	bne	_and_l_45_, 1, _false_53_
 	bne	$11, $2, _false_53_
 # was:	bne	_and_l_45_, _and_r_46_, _false_53_
 	ori	$10, $0, 1

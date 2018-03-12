@@ -40,6 +40,8 @@ main:
 # 	ori	_and_r_6_,2,0
 	ori	$10, $0, 0
 # was:	ori	_tmp_4_, 0, 0
+	bne	$16, $1, _false_7_
+# was:	bne	_and_l_5_, 1, _false_7_
 	bne	$16, $2, _false_7_
 # was:	bne	_and_l_5_, _and_r_6_, _false_7_
 	ori	$10, $0, 1
@@ -62,11 +64,13 @@ _wBoolF_8_:
 # 	ori	_and_r_12_,2,0
 	ori	$10, $0, 0
 # was:	ori	_tmp_10_, 0, 0
-	bne	$16, $2, _false_13_
-# was:	bne	_and_l_11_, _and_r_12_, _false_13_
+	bne	$16, $1, _true_13_
+# was:	bne	_and_l_11_, 1, _true_13_
+	bne	$2, $1, _true_13_
+# was:	bne	_and_r_12_, 1, _true_13_
 	ori	$10, $0, 1
 # was:	ori	_tmp_10_, 0, 1
-_false_13_:
+_true_13_:
 # 	ori	_letBind_9_,_tmp_10_,0
 	la	$2, _true
 # was:	la	2, _true

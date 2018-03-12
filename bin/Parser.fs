@@ -922,7 +922,7 @@ let _fsyacc_reductions ()  =    [|
                 (
                    (
 # 150 "src/Parser.fsp"
-                                            Replicate (_3, _5, _7, _1)
+                                            Replicate (_3, _5, (), _1)
                    )
 # 150 "src/Parser.fsp"
                  : AbSyn.UntypedExp));

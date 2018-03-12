@@ -302,7 +302,7 @@ let rec evalExp (e : UntypedExp, vtab : VarTable, ftab : FunTable) : Value =
          a meaningful message).
   *)
   | Replicate (n, a, tp, pos) ->
-        let ne = evalExp(n, vtab, ftab)
+        (*let ne = evalExp(n, vtab, ftab)
         let ee = evalExp(a, vtab, ftab)
         match ne with
           | IntVal size ->
@@ -310,7 +310,7 @@ let rec evalExp (e : UntypedExp, vtab : VarTable, ftab : FunTable) : Value =
                   ArrayVal( List.map (fun x -> x) [ee], tp )
               else let msg = sprintf "Error: In Replicate call, size is negative: %i" size
                    raise (MyError(msg, pos))
-          | _ -> raise (MyError("Replicate argument is not a number: "+ppVal 0 ne, pos))
+          | _ -> raise (MyError("Replicate argument is not a number: "+ppVal 0 ne, pos)) *)
         failwith "Unimplemented interpretation of replicate"
 
   (* TODO project task 2: `filter(p, arr)`
