@@ -431,26 +431,30 @@ let rec compileExp  (e      : TypedExp)
       let code1 = compileExp e1 vtable t1
       let code2 = compileExp e2 vtable t2
       let falseLabel = newName "false"
-      code1 @  code2 @
+      code1 @
       [ Mips.LI (place,"0")
       ; Mips.BNE (t1, makeConst(1),falseLabel)
-      ; Mips.BNE (t1, t2, falseLabel)
+      ]
+      @ code2 @
+      [ Mips.BNE (t1, t2, falseLabel)
       ; Mips.LI (place, "1")
       ; Mips.LABEL falseLabel]
       //failwith "Unimplemented code generation of &&"
 
   | Or (e1, e2, pos) ->
-      let t1 = newName "and_l"
-      let t2 = newName "and_r"
+      let t1 = newName "or_l"
+      let t2 = newName "or_r"
 
       let code1 = compileExp e1 vtable t1
       let code2 = compileExp e2 vtable t2
       let trueLabel = newName "true"
-      code1 @  code2 @
-      [ Mips.LI (place,"0")
-      ; Mips.BNE (t1, makeConst(1),trueLabel)
-      ; Mips.BNE (t2, makeConst(1), trueLabel)
-      ; Mips.LI (place, "1")
+      code1 @
+      [ Mips.LI (place,"1")
+      ; Mips.BNE (t1, makeConst(0),trueLabel)
+      ]
+      @ code2 @
+      [ Mips.BNE (t2, makeConst(0), trueLabel)
+      ; Mips.LI (place, "0")
       ; Mips.LABEL trueLabel]
       //failwith "Unimplemented code generation of ||"
 

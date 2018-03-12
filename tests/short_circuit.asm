@@ -31,50 +31,51 @@ no_way:
 # Function main
 main:
 	sw	$31, -4($29)
+	sw	$17, -12($29)
 	sw	$16, -8($29)
-	addi	$29, $29, -12
-	ori	$16, $0, 0
+	addi	$29, $29, -16
+	ori	$17, $0, 0
 # was:	ori	_and_l_5_, 0, 0
+	ori	$16, $0, 0
+# was:	ori	_tmp_4_, 0, 0
+	bne	$17, $1, _false_7_
+# was:	bne	_and_l_5_, 1, _false_7_
 	jal	no_way
 # was:	jal	no_way, 
 # 	ori	_and_r_6_,2,0
-	ori	$10, $0, 0
-# was:	ori	_tmp_4_, 0, 0
-	bne	$16, $1, _false_7_
-# was:	bne	_and_l_5_, 1, _false_7_
-	bne	$16, $2, _false_7_
+	bne	$17, $2, _false_7_
 # was:	bne	_and_l_5_, _and_r_6_, _false_7_
-	ori	$10, $0, 1
+	ori	$16, $0, 1
 # was:	ori	_tmp_4_, 0, 1
 _false_7_:
 # 	ori	_letBind_3_,_tmp_4_,0
 	la	$2, _true
 # was:	la	2, _true
-	bne	$10, $0, _wBoolF_8_
+	bne	$16, $0, _wBoolF_8_
 # was:	bne	_letBind_3_, 0, _wBoolF_8_
 	la	$2, _false
 # was:	la	2, _false
 _wBoolF_8_:
 	jal	putstring
 # was:	jal	putstring, 2
+	ori	$10, $0, 1
+# was:	ori	_or_l_11_, 0, 1
 	ori	$16, $0, 1
-# was:	ori	_and_l_11_, 0, 1
+# was:	ori	_tmp_10_, 0, 1
+	bne	$10, $0, _true_13_
+# was:	bne	_or_l_11_, 0, _true_13_
 	jal	no_way
 # was:	jal	no_way, 
-# 	ori	_and_r_12_,2,0
-	ori	$10, $0, 0
+# 	ori	_or_r_12_,2,0
+	bne	$2, $0, _true_13_
+# was:	bne	_or_r_12_, 0, _true_13_
+	ori	$16, $0, 0
 # was:	ori	_tmp_10_, 0, 0
-	bne	$16, $1, _true_13_
-# was:	bne	_and_l_11_, 1, _true_13_
-	bne	$2, $1, _true_13_
-# was:	bne	_and_r_12_, 1, _true_13_
-	ori	$10, $0, 1
-# was:	ori	_tmp_10_, 0, 1
 _true_13_:
 # 	ori	_letBind_9_,_tmp_10_,0
 	la	$2, _true
 # was:	la	2, _true
-	bne	$10, $0, _wBoolF_14_
+	bne	$16, $0, _wBoolF_14_
 # was:	bne	_letBind_9_, 0, _wBoolF_14_
 	la	$2, _false
 # was:	la	2, _false
@@ -84,7 +85,8 @@ _wBoolF_14_:
 	ori	$2, $0, 1
 # was:	ori	_mainres_2_, 0, 1
 # 	ori	2,_mainres_2_,0
-	addi	$29, $29, 12
+	addi	$29, $29, 16
+	lw	$17, -12($29)
 	lw	$16, -8($29)
 	lw	$31, -4($29)
 	jr	$31
