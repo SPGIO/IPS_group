@@ -1,0 +1,13 @@
+fun int double(int x) = x + x
+fun int plus (int x, int y) = x + y
+
+fun int main() =
+  let N = read(int) in // read N from the keyboard
+  if N == 0 then
+    let x = write("Incorrect Input!") in 0-1
+  else if N < 0 then
+    let x = write("Incorrect Input!") in 0-1
+  else
+    let a = iota(N) in
+    let b = map(double, a) in
+    let d = reduce(plus,0,b) in write(d)
