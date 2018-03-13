@@ -351,7 +351,8 @@ let rec evalExp (e : UntypedExp, vtab : VarTable, ftab : FunTable) : Value =
         let nel  = evalExp(ne, vtab, ftab)
         match arr with
           | ArrayVal (lst,tp1) ->
-               List.fold (fun acc x -> evalFunArg (farg, vtab, ftab, pos, [acc;x])) nel lst
+               let list = List.scan (fun acc x -> evalFunArg (farg, vtab, ftab, pos, [acc;x]))  nel lst
+               ArrayVal (list, tp1)
           | otherwise -> raise (MyError("Third argument of reduce is not an array: "+ppVal 0 arr
                                        , pos))
 

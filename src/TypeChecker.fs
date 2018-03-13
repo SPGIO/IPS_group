@@ -309,8 +309,9 @@ and checkExp  (ftab : FunTable)
              | Char -> (Array(Char), Replicate (n_dec, a_dec, a_type, pos))
              | Int -> (Array(Int), Replicate (n_dec, a_dec, a_type, pos))
              | Bool -> (Array(Bool), Replicate (n_dec, a_dec, a_type, pos))
+             | _ -> raise (MyError ("Replicate: Argument not an int, char or bool", pos))
         else
-            raise (MyError ("Replicate: Argument not an int, char or bool", pos))
+            raise (MyError ("Replicate: Argument not an int", pos))
             //failwith "Unimplemented type check of replicate"
 
     (* TODO project task 2: Hint for `filter(f, arr)`

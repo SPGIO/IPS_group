@@ -1,11 +1,1 @@
-fun int write_int(int x) = write(x)
-
-fun [int] write_int_arr([int] x) = map(write_int, x)
-
-fun bool isMul16(int a) =
-  (a / 16) * 16 == a
-
-fun [int] main() =
-  let n = read(int) in
-  let x = filter(fn bool (int a) => (a/2)*2==a, iota(n)) in
-  write_int_arr(x)
+let x = let y = 4 + 5 in 6 in x * 2
