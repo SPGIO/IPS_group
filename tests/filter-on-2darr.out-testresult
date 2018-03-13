@@ -1,2 +1,4 @@
-Illegal symbol in input at line 6, position 6
+Error in /mnt/c/Users/Simon/Desktop/compiler/fasto/fasto/./bin/../tests/filter-on-2darr.asm line 335: Runtime exception at 0x004002d0: address out of range 0x00000000
+
+Processing terminated due to errors.
 

@@ -733,8 +733,52 @@ let rec compileExp  (e      : TypedExp)
          counter computed in step (c). You do this of course with a
          `Mips.SW(counter_reg, place, "0")` instruction.
   *)
-  | Filter (_, _, _, _) ->
-      failwith "Unimplemented code generation of map"
+  | Filter (binop, arr_exp, f_arg_type, pos) ->
+      let arr_reg  = newName "arr_reg"   (* address of array *)
+      let size_reg = newName "size_reg"  (* size of input array *)
+      let i_reg    = newName "ind_var"   (* input array counter *)
+      let counter_reg = newName "counter_reg" (* output array counter  *)
+      let tmp_reg  = newName "tmp_reg"   (* several purposes *)
+      let loop_beg = newName "loop_beg"
+      let loop_end = newName "loop_end"
+      let true_label = newName "true_label"
+      let arr_code = compileExp arr_exp vtable arr_reg
+      let header1 = [ Mips.LW(size_reg, arr_reg, "0") ]
+
+
+      (* Set arr_reg to address of first element instead. *)
+      (* Set i_reg to 0. While i < size_reg, loop. *)
+
+
+      let loop_code =
+              [ Mips.ADDI(arr_reg, arr_reg, "4")
+              ; Mips.MOVE(i_reg, "0")
+              ; Mips.LABEL(loop_beg)
+              ; Mips.SUB(tmp_reg, i_reg, size_reg)
+              ; Mips.BGEZ(tmp_reg, loop_end)
+              ]
+      (* Load arr[i] into tmp_reg *)
+      let load_code =
+              match getElemSize f_arg_type with
+                | One  -> [ Mips.LB   (tmp_reg, arr_reg, "0")
+                          ; Mips.ADDI (arr_reg, arr_reg, "1")
+                          ]
+                | Four -> [ Mips.LW   (tmp_reg, arr_reg, "0")
+                          ; Mips.ADDI (arr_reg, arr_reg, "4")
+                          ]
+          (* place := binop(tmp_reg, place) *)
+      let apply_code =
+              applyFunArg(binop, [place; tmp_reg], vtable, place, pos)
+
+
+      arr_code @ header1  @ loop_code @ load_code @ apply_code @
+         [ Mips.ADDI(i_reg, i_reg, "1")
+         ; Mips.BEQ(place, makeConst(0), loop_beg)
+         
+         ; Mips.J loop_beg
+         ; Mips.LABEL loop_end
+         ]
+          //failwith "Unimplemented code generation of map"
 
   (* TODO project task 2: see also the comment to replicate.
      `scan(f, ne, arr)`: you can inspire yourself from the implementation of

@@ -23,6 +23,7 @@ type token =
   | ARROW of ((int*int))
   | REPLICATE of ((int*int))
   | SCAN of ((int*int))
+  | FILTER of ((int*int))
   | MULT of ((int*int))
   | DIV of ((int*int))
   | AND of ((int*int))
@@ -70,6 +71,7 @@ type tokenId =
     | TOKEN_ARROW
     | TOKEN_REPLICATE
     | TOKEN_SCAN
+    | TOKEN_FILTER
     | TOKEN_MULT
     | TOKEN_DIV
     | TOKEN_AND

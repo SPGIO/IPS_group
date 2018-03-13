@@ -322,8 +322,26 @@ and checkExp  (ftab : FunTable)
             - `arr` should be of type `[ta]`
             - the result of filter should have type `[tb]`
     *)
-    | Filter (_, _, _, _) ->
-        failwith "Unimplemented type check of map"
+    | Filter (f, arr_exp, f_res, pos) ->
+        let (arr_type, arr_exp_dec) = checkExp ftab vtab arr_exp
+        let elem_type =
+            match arr_type with
+              | Array t -> t
+              | other   -> raise (MyError ("Filter: Argument not an array", pos))
+        let (f', f_res_type, f_arg_type) =
+            match checkFunArg ftab vtab pos f with
+              | (f', res, [a1]) -> (f', res, a1)
+              | (_,  res, args) ->
+                   raise (MyError ( "Filter: incompatible function type of " +
+                                    ppFunArg 0 f + ":" + showFunType (args, res)
+                                  , pos ))
+        if f_res_type = Bool && (Array f_arg_type) = arr_type
+        then ( Array elem_type
+             , Filter (f', arr_exp_dec, f_res_type, pos) )
+        else raise (MyError( "Filter: array element types does not match." +
+                             ppType f_arg_type + " instead of " + ppType arr_type
+                           , pos))
+
 
     (* TODO project task 2: `scan(f, ne, arr)`
         Hint: Implementation is very similar to `reduce(f, ne, arr)`.

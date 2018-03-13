@@ -172,7 +172,7 @@ let rec evalExp (e : UntypedExp, vtab : VarTable, ftab : FunTable) : Value =
         let res1   = evalExp(e1, vtab, ftab)
         let res2   = evalExp(e2, vtab, ftab)
         match (res1, res2) with
-          | (IntVal n1, IntVal n2) -> IntVal (n1*n2)
+          | (IntVal n1, IntVal n2) -> IntVal (n1/n2)
           | _ -> invalidOperands "Division on non-integral args: " [(Int, Int)] res1 res2 pos
   | And (e1, e2, pos) ->
         let res1 = evalExp(e1, vtab, ftab)
@@ -325,8 +325,21 @@ let rec evalExp (e : UntypedExp, vtab : VarTable, ftab : FunTable) : Value =
          under predicate `p`, i.e., `p(a) = true`;
        - create an `ArrayVal` from the (list) result of the previous step.
   *)
-  | Filter (_, _, _, _) ->
-        failwith "Unimplemented interpretation of map"
+  | Filter (farg, arrexp, _, pos) ->
+      let arr  = evalExp(arrexp, vtab, ftab)
+      let farg_ret_type = rtpFunArg farg ftab pos
+
+      let is_return_type_bool =
+          match farg_ret_type with
+          | Bool -> true
+          | otherwise -> false
+      let unpack (b) : bool = match b with | BoolVal bt -> bt
+      match arr with
+        | ArrayVal (lst,tp1) when is_return_type_bool ->
+            let flst = List.filter (fun x -> unpack(evalFunArg (farg, vtab, ftab, pos, [x]) ) ) lst
+            ArrayVal (flst, tp1)
+        | otherwise -> raise (MyError( "Second argument of filter is not an array: "+ppVal 0 arr
+                                     , pos))
 
   (* TODO project task 2: `scan(f, ne, arr)`
      Implementation similar to reduce, except that it produces an array
