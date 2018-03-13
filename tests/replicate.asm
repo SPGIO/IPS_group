@@ -26,10 +26,15 @@ writeBool:
 # was:	ori	_param_b_1_, 2, 0
 # 	ori	_tmp_3_,_param_b_1_,0
 # 	ori	_writeBoolres_2_,_tmp_3_,0
-	ori	$2, $16, 0
-# was:	ori	2, _writeBoolres_2_, 0
-	jal	putchar
-# was:	jal	putchar, 2
+	la	$2, _true
+# was:	la	2, _true
+	bne	$16, $0, _wBoolF_4_
+# was:	bne	_writeBoolres_2_, 0, _wBoolF_4_
+	la	$2, _false
+# was:	la	2, _false
+_wBoolF_4_:
+	jal	putstring
+# was:	jal	putstring, 2
 	ori	$2, $16, 0
 # was:	ori	2, _writeBoolres_2_, 0
 	addi	$29, $29, 12
@@ -46,95 +51,95 @@ main:
 	sw	$16, -8($29)
 	addi	$29, $29, -28
 	ori	$10, $0, 7
-# was:	ori	_size_reg_6_, 0, 7
-	ori	$12, $0, 97
-# was:	ori	_a_reg_7_, 0, 97
+# was:	ori	_size_reg_7_, 0, 7
+	ori	$13, $0, 0
+# was:	ori	_a_reg_8_, 0, 0
 	addi	$10, $10, 1
-# was:	addi	_size_reg_6_, _size_reg_6_, 1
-	bgez	$10, _safe_lab_8_
-# was:	bgez	_size_reg_6_, _safe_lab_8_
+# was:	addi	_size_reg_7_, _size_reg_7_, 1
+	bgez	$10, _safe_lab_9_
+# was:	bgez	_size_reg_7_, _safe_lab_9_
 	ori	$5, $0, 4
 # was:	ori	5, 0, 4
 	j	_IllegalArrSizeError_
-_safe_lab_8_:
+_safe_lab_9_:
 	addi	$10, $10, -1
-# was:	addi	_size_reg_6_, _size_reg_6_, -1
+# was:	addi	_size_reg_7_, _size_reg_7_, -1
 	ori	$11, $28, 0
-# was:	ori	_letBind_5_, 28, 0
-	addi	$13, $10, 3
-# was:	addi	_tmp_14_, _size_reg_6_, 3
-	sra	$13, $13, 2
-# was:	sra	_tmp_14_, _tmp_14_, 2
-	sll	$13, $13, 2
-# was:	sll	_tmp_14_, _tmp_14_, 2
-	addi	$13, $13, 4
-# was:	addi	_tmp_14_, _tmp_14_, 4
-	add	$28, $28, $13
-# was:	add	28, 28, _tmp_14_
+# was:	ori	_letBind_6_, 28, 0
+	addi	$12, $10, 3
+# was:	addi	_tmp_15_, _size_reg_7_, 3
+	sra	$12, $12, 2
+# was:	sra	_tmp_15_, _tmp_15_, 2
+	sll	$12, $12, 2
+# was:	sll	_tmp_15_, _tmp_15_, 2
+	addi	$12, $12, 4
+# was:	addi	_tmp_15_, _tmp_15_, 4
+	add	$28, $28, $12
+# was:	add	28, 28, _tmp_15_
 	sw	$10, 0($11)
-# was:	sw	_size_reg_6_, 0(_letBind_5_)
-	addi	$13, $11, 4
-# was:	addi	_addr_reg_9_, _letBind_5_, 4
-	ori	$15, $1, 0
-# was:	ori	_i_reg_10_, 1, 0
-_loop_beg_11_:
-	sub	$14, $15, $10
-# was:	sub	_tmp_reg_13_, _i_reg_10_, _size_reg_6_
-	bgez	$14, _loop_end_12_
-# was:	bgez	_tmp_reg_13_, _loop_end_12_
-	sb	$12, 0($13)
-# was:	sb	_a_reg_7_, 0(_addr_reg_9_)
-	addi	$13, $13, 1
-# was:	addi	_addr_reg_9_, _addr_reg_9_, 1
-	j	_loop_beg_11_
-_loop_end_12_:
-# 	ori	_arr_reg_16_,_letBind_5_,0
-	lw	$17, 0($11)
-# was:	lw	_size_reg_15_, 0(_arr_reg_16_)
-	ori	$16, $28, 0
-# was:	ori	_mainres_4_, 28, 0
-	addi	$10, $17, 3
-# was:	addi	_tmp_25_, _size_reg_15_, 3
+# was:	sw	_size_reg_7_, 0(_letBind_6_)
+	addi	$12, $11, 4
+# was:	addi	_addr_reg_10_, _letBind_6_, 4
+	ori	$14, $1, 0
+# was:	ori	_i_reg_11_, 1, 0
+_loop_beg_12_:
+	sub	$15, $14, $10
+# was:	sub	_tmp_reg_14_, _i_reg_11_, _size_reg_7_
+	bgez	$15, _loop_end_13_
+# was:	bgez	_tmp_reg_14_, _loop_end_13_
+	sb	$13, 0($12)
+# was:	sb	_a_reg_8_, 0(_addr_reg_10_)
+	addi	$12, $12, 1
+# was:	addi	_addr_reg_10_, _addr_reg_10_, 1
+	j	_loop_beg_12_
+_loop_end_13_:
+# 	ori	_arr_reg_17_,_letBind_6_,0
+	lw	$16, 0($11)
+# was:	lw	_size_reg_16_, 0(_arr_reg_17_)
+	ori	$17, $28, 0
+# was:	ori	_mainres_5_, 28, 0
+	addi	$10, $16, 3
+# was:	addi	_tmp_26_, _size_reg_16_, 3
 	sra	$10, $10, 2
-# was:	sra	_tmp_25_, _tmp_25_, 2
+# was:	sra	_tmp_26_, _tmp_26_, 2
 	sll	$10, $10, 2
-# was:	sll	_tmp_25_, _tmp_25_, 2
+# was:	sll	_tmp_26_, _tmp_26_, 2
 	addi	$10, $10, 4
-# was:	addi	_tmp_25_, _tmp_25_, 4
+# was:	addi	_tmp_26_, _tmp_26_, 4
 	add	$28, $28, $10
-# was:	add	28, 28, _tmp_25_
-	sw	$17, 0($16)
-# was:	sw	_size_reg_15_, 0(_mainres_4_)
-	addi	$18, $16, 4
-# was:	addi	_addr_reg_19_, _mainres_4_, 4
+# was:	add	28, 28, _tmp_26_
+	sw	$16, 0($17)
+# was:	sw	_size_reg_16_, 0(_mainres_5_)
+	addi	$18, $17, 4
+# was:	addi	_addr_reg_20_, _mainres_5_, 4
 	ori	$19, $0, 0
-# was:	ori	_i_reg_20_, 0, 0
+# was:	ori	_i_reg_21_, 0, 0
 	addi	$20, $11, 4
-# was:	addi	_elem_reg_17_, _arr_reg_16_, 4
-_loop_beg_21_:
-	sub	$10, $19, $17
-# was:	sub	_tmp_reg_23_, _i_reg_20_, _size_reg_15_
-	bgez	$10, _loop_end_22_
-# was:	bgez	_tmp_reg_23_, _loop_end_22_
+# was:	addi	_elem_reg_18_, _arr_reg_17_, 4
+_loop_beg_22_:
+	sub	$10, $19, $16
+# was:	sub	_tmp_reg_24_, _i_reg_21_, _size_reg_16_
+	bgez	$10, _loop_end_23_
+# was:	bgez	_tmp_reg_24_, _loop_end_23_
 	lb	$2, 0($20)
-# was:	lb	_res_reg_18_, 0(_elem_reg_17_)
-# 	ori	2,_res_reg_18_,0
+# was:	lb	_res_reg_19_, 0(_elem_reg_18_)
+# 	ori	2,_res_reg_19_,0
 	jal	writeBool
 # was:	jal	writeBool, 2
-# 	ori	_tmp_reg_24_,2,0
-# 	ori	_res_reg_18_,_tmp_reg_24_,0
+# 	ori	_tmp_reg_25_,2,0
+# 	ori	_res_reg_19_,_tmp_reg_25_,0
 	addi	$20, $20, 1
-# was:	addi	_elem_reg_17_, _elem_reg_17_, 1
+# was:	addi	_elem_reg_18_, _elem_reg_18_, 1
 	sb	$2, 0($18)
-# was:	sb	_res_reg_18_, 0(_addr_reg_19_)
+# was:	sb	_res_reg_19_, 0(_addr_reg_20_)
 	addi	$18, $18, 1
-# was:	addi	_addr_reg_19_, _addr_reg_19_, 1
+# was:	addi	_addr_reg_20_, _addr_reg_20_, 1
 	addi	$19, $19, 1
-# was:	addi	_i_reg_20_, _i_reg_20_, 1
-	j	_loop_beg_21_
-_loop_end_22_:
-	ori	$2, $16, 0
-# was:	ori	2, _mainres_4_, 0
+# was:	addi	_i_reg_21_, _i_reg_21_, 1
+	j	_loop_beg_22_
+_loop_end_23_:
+	ori	$2, $17, 0
+# was:	ori	2, _mainres_5_, 0
 	addi	$29, $29, 28
 	lw	$20, -24($29)
 	lw	$19, -20($29)
