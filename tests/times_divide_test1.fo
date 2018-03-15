@@ -1,0 +1,4 @@
+fun int main() =
+let x = let y = x * 2 in
+2 * 2
+write(x)

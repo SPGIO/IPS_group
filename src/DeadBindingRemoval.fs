@@ -78,15 +78,15 @@ let rec removeDeadBindingsInExp (e : TypedExp) : (bool * DBRtab * TypedExp) =
                         expression `e` and to propagate its results (in addition
                         to recording the use of `name`).
             *)
-          
+
         | Let (Dec (name, e, decpos), body, pos) ->
-            let (body_IO, body_uses,body') = removeDeadBindingsInExp body
+            let (body_IO, body_uses, body') = removeDeadBindingsInExp body
             let is_used = isUsed name body_uses
-            if is_used then
-                (body_IO, body_uses, body')
-            else
+            match is_used with
+            | false -> (body_IO, body_uses, body')
+            | true ->
                 let (e_IO, e_uses, e') = removeDeadBindingsInExp e
-                (e_IO, SymTab.combine e_uses body_uses, Let(Dec(name, e', decpos), body', pos))
+                (e_IO || body_IO, SymTab.combine e_uses body_uses, Let(Dec(name, e', decpos), body', pos))
             (* Task 3, Hints for the `Let` case:
                   - recursively process the `body` of the let-binding.
                   - if `name` was not found to have been used in `body`

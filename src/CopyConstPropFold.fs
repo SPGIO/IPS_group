@@ -122,6 +122,8 @@ let rec copyConstPropFoldExp (vtable : VarTable)
             match (e1', e2') with
                 | (Constant (BoolVal a, _), Constant (BoolVal b, _)) ->
                     Constant (BoolVal (a && b), pos)
+                | (Constant (BoolVal false, _), _) ->
+                    Constant( BoolVal false, pos)
                 | _ -> And (e1', e2', pos)
             (* TODO project task 3: see above. you may inspire yourself from `Or` *)
         | Constant (x,pos) -> Constant (x,pos)

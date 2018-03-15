@@ -1,1 +1,5 @@
-let x = let y = 4 + 5 in 6 in x * 2
+fun int main() =
+    let length = 40 in
+    let array = iota(40) in
+    let index = 4 in
+    write(x)

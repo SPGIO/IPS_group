@@ -544,58 +544,6 @@ let rec compileExp  (e      : TypedExp)
        @ loop_iota
        @ loop_footer
 
-  (* map(f, {x1, x2, ..., xn}) = { f(x1), ..., f(xn) } *)
-  | Map (farg, arr_exp, elem_type, ret_type, pos) ->
-      let size_reg = newName "size_reg" (* size of input/output array *)
-      let arr_reg  = newName "arr_reg"  (* address of array *)
-      let elem_reg = newName "elem_reg" (* address of single element *)
-      let res_reg  = newName "res_reg"
-      let arr_code = compileExp arr_exp vtable arr_reg
-
-      let get_size = [ Mips.LW (size_reg, arr_reg, "0") ]
-
-      let addr_reg = newName "addr_reg" (* address of element in new array *)
-      let i_reg = newName "i_reg"
-      let init_regs = [ Mips.ADDI (addr_reg, place, "4")
-                      ; Mips.MOVE (i_reg, "0")
-                      ; Mips.ADDI (elem_reg, arr_reg, "4")
-                      ]
-      let loop_beg = newName "loop_beg"
-      let loop_end = newName "loop_end"
-      let tmp_reg = newName "tmp_reg"
-      let loop_header = [ Mips.LABEL (loop_beg)
-                        ; Mips.SUB (tmp_reg, i_reg, size_reg)
-                        ; Mips.BGEZ (tmp_reg, loop_end) ]
-      (* map is 'arr[i] = f(old_arr[i])'. *)
-      let loop_map0 =
-          match getElemSize elem_type with
-            | One  -> Mips.LB(res_reg, elem_reg, "0")
-                         :: applyFunArg(farg, [res_reg], vtable, res_reg, pos)
-                         @  [ Mips.ADDI(elem_reg, elem_reg, "1") ]
-            | Four -> Mips.LW(res_reg, elem_reg, "0")
-                         :: applyFunArg(farg, [res_reg], vtable, res_reg, pos)
-                         @ [ Mips.ADDI(elem_reg, elem_reg, "4") ]
-      let loop_map1 =
-              match getElemSize ret_type with
-                | One  -> [ Mips.SB (res_reg, addr_reg, "0") ]
-                | Four -> [ Mips.SW (res_reg, addr_reg, "0") ]
-
-      let loop_footer =
-              [ Mips.ADDI (addr_reg, addr_reg,
-                           makeConst (elemSizeToInt (getElemSize ret_type)))
-              ; Mips.ADDI (i_reg, i_reg, "1")
-              ; Mips.J loop_beg
-              ; Mips.LABEL loop_end
-              ]
-      arr_code
-       @ get_size
-       @ dynalloc (size_reg, place, ret_type)
-       @ init_regs
-       @ loop_header
-       @ loop_map0
-       @ loop_map1
-       @ loop_footer
-
 
   (* reduce(f, acc, {x1, x2, ...}) = f(..., f(x2, f(x1, acc))) *)
   | Reduce (binop, acc_exp, arr_exp, tp, pos) ->
@@ -734,51 +682,129 @@ let rec compileExp  (e      : TypedExp)
          `Mips.SW(counter_reg, place, "0")` instruction.
   *)
   | Filter (binop, arr_exp, f_arg_type, pos) ->
-      let arr_reg  = newName "arr_reg"   (* address of array *)
-      let size_reg = newName "size_reg"  (* size of input array *)
-      let i_reg    = newName "ind_var"   (* input array counter *)
-      let counter_reg = newName "counter_reg" (* output array counter  *)
-      let tmp_reg  = newName "tmp_reg"   (* several purposes *)
+      let size_reg = newName "size_reg" (* size of input/output array *)
+      let arr_reg  = newName "arr_reg"  (* address of array *)
+      let elem_reg = newName "elem_reg" (* address of single element *)
+      let res_reg  = newName "res_reg"
+      let bool_reg = newName "bool_reg"
+
+      let arr_code = compileExp arr_exp vtable arr_reg
+
+      let get_size = [ Mips.LW (size_reg, arr_reg, "0") ]
+
+      let addr_reg = newName "addr_reg" (* address of element in new array *)
+      let i_reg = newName "i_reg"
+      let k_reg = newName "k_reg"
+      let init_regs = [ Mips.ADDI (addr_reg, place, "4")
+                      ; Mips.MOVE (bool_reg, "0")
+                      ; Mips.MOVE (i_reg, "0")
+                      ; Mips.MOVE (k_reg, "4")
+                      ; Mips.ADDI (elem_reg, arr_reg, "4")
+                      ]
+
       let loop_beg = newName "loop_beg"
       let loop_end = newName "loop_end"
-      let true_label = newName "true_label"
-      let arr_code = compileExp arr_exp vtable arr_reg
-      let header1 = [ Mips.LW(size_reg, arr_reg, "0") ]
+      let tmp_reg = newName "tmp_reg"
+      let footer = newName "loop_footer"
+      let loop_header = [ Mips.LABEL (loop_beg)
+                        ; Mips.SUB (tmp_reg, i_reg, size_reg)
+                        ; Mips.BGEZ (tmp_reg, loop_end) ]
 
+      let loop_filter1 =
+          match getElemSize f_arg_type with
+            | One  ->
+                Mips.LB(res_reg, elem_reg, "0")
+                :: applyFunArg(binop, [res_reg], vtable, bool_reg, pos)
+                @ [ Mips.ADDI(elem_reg, elem_reg, "1") ]
+                @ [ Mips.BEQ (bool_reg, "0", footer)]
+                @ [ Mips.ADDI(k_reg, k_reg, "1")]
+            | Four ->
+                Mips.LW(res_reg, elem_reg, "0")
+                :: applyFunArg(binop, [res_reg], vtable, bool_reg, pos)
+                @ [ Mips.ADDI(elem_reg, elem_reg, "4") ]
+                @ [ Mips.BEQ (bool_reg, "0", footer)]
+                @ [ Mips.ADDI(k_reg, k_reg, "1")]
 
-      (* Set arr_reg to address of first element instead. *)
-      (* Set i_reg to 0. While i < size_reg, loop. *)
-
-
-      let loop_code =
-              [ Mips.ADDI(arr_reg, arr_reg, "4")
-              ; Mips.MOVE(i_reg, "0")
-              ; Mips.LABEL(loop_beg)
-              ; Mips.SUB(tmp_reg, i_reg, size_reg)
-              ; Mips.BGEZ(tmp_reg, loop_end)
-              ]
-      (* Load arr[i] into tmp_reg *)
-      let load_code =
+      let loop_filter2 =
               match getElemSize f_arg_type with
-                | One  -> [ Mips.LB   (tmp_reg, arr_reg, "0")
-                          ; Mips.ADDI (arr_reg, arr_reg, "1")
-                          ]
-                | Four -> [ Mips.LW   (tmp_reg, arr_reg, "0")
-                          ; Mips.ADDI (arr_reg, arr_reg, "4")
-                          ]
-          (* place := binop(tmp_reg, place) *)
-      let apply_code =
-              applyFunArg(binop, [place; tmp_reg], vtable, place, pos)
+                | One  -> [ Mips.SB (res_reg, addr_reg, "0")  ] @ [Mips.ADDI (addr_reg, addr_reg, "1")]
+                | Four -> [ Mips.SW (res_reg, addr_reg, "0")  ] @ [Mips.ADDI (addr_reg, addr_reg, "4")]
 
 
-      arr_code @ header1  @ loop_code @ load_code @ apply_code @
-         [ Mips.ADDI(i_reg, i_reg, "1")
-         ; Mips.BEQ(place, makeConst(0), loop_beg)
+      let loop_footer =
+          [ Mips.LABEL footer
+          ; Mips.ADDI (i_reg, i_reg, "1")
+          ; Mips.J loop_beg
+          ; Mips.LABEL loop_end
+          ; Mips.SW(k_reg, place, "0")
+          ]
 
-         ; Mips.J loop_beg
-         ; Mips.LABEL loop_end
-         ]
-          //failwith "Unimplemented code generation of map"
+      arr_code
+        @ get_size
+        @ dynalloc (size_reg, place, f_arg_type)
+        @ init_regs
+        @ loop_header
+        @ loop_filter1
+        @ loop_filter2
+        @ loop_footer
+        @ []
+
+
+
+
+
+    (* map(f, {x1, x2, ..., xn}) = { f(x1), ..., f(xn) } *)
+  | Map (farg, arr_exp, elem_type, ret_type, pos) ->
+      let size_reg = newName "size_reg" (* size of input/output array *)
+      let arr_reg  = newName "arr_reg"  (* address of array *)
+      let elem_reg = newName "elem_reg" (* address of single element *)
+      let res_reg  = newName "res_reg"
+      let arr_code = compileExp arr_exp vtable arr_reg
+
+      let get_size = [ Mips.LW (size_reg, arr_reg, "0") ]
+
+      let addr_reg = newName "addr_reg" (* address of element in new array *)
+      let i_reg = newName "i_reg"
+      let init_regs = [ Mips.ADDI (addr_reg, place, "4")
+                      ; Mips.MOVE (i_reg, "0")
+                      ; Mips.ADDI (elem_reg, arr_reg, "4")
+                      ]
+      let loop_beg = newName "loop_beg"
+      let loop_end = newName "loop_end"
+      let tmp_reg = newName "tmp_reg"
+      let loop_header = [ Mips.LABEL (loop_beg)
+                        ; Mips.SUB (tmp_reg, i_reg, size_reg)
+                        ; Mips.BGEZ (tmp_reg, loop_end) ]
+      (* map is 'arr[i] = f(old_arr[i])'. *)
+      let loop_map0 =
+          match getElemSize elem_type with
+            | One  -> Mips.LB(res_reg, elem_reg, "0")
+                         :: applyFunArg(farg, [res_reg], vtable, res_reg, pos)
+                         @  [ Mips.ADDI(elem_reg, elem_reg, "1") ]
+            | Four -> Mips.LW(res_reg, elem_reg, "0")
+                         :: applyFunArg(farg, [res_reg], vtable, res_reg, pos)
+                         @ [ Mips.ADDI(elem_reg, elem_reg, "4") ]
+      let loop_map1 =
+              match getElemSize ret_type with
+                | One  -> [ Mips.SB (res_reg, addr_reg, "0") ]
+                | Four -> [ Mips.SW (res_reg, addr_reg, "0") ]
+
+      let loop_footer =
+              [ Mips.ADDI (addr_reg, addr_reg,
+                           makeConst (elemSizeToInt (getElemSize ret_type)))
+              ; Mips.ADDI (i_reg, i_reg, "1")
+              ; Mips.J loop_beg
+              ; Mips.LABEL loop_end
+              ]
+      arr_code
+       @ get_size
+       @ dynalloc (size_reg, place, ret_type)
+       @ init_regs
+       @ loop_header
+       @ loop_map0
+       @ loop_map1
+       @ loop_footer
+
 
   (* TODO project task 2: see also the comment to replicate.
      `scan(f, ne, arr)`: you can inspire yourself from the implementation of
@@ -788,67 +814,69 @@ let rec compileExp  (e      : TypedExp)
         the loop.
   *)
   | Scan (binop, acc_exp, arr_exp, tp, pos) ->
-       let arr_reg  = newName "arr_reg"   (* address of input array *)
-       let ret_reg  = newName "ret_reg"   (* address of output array *)
-       let acc_reg  = newName "acc_reg"   (* Accumulator *)
-       let size_reg = newName "size_reg"  (* size of input array *)
-       let i_reg    = newName "ind_var"   (* loop counter *)
-       let tmp_reg  = newName "tmp_reg"   (* several purposes *)
-       let loop_beg = newName "loop_beg"
-       let loop_end = newName "loop_end"
+      let size_reg = newName "size_reg" (* size of input/output array *)
+      let arr_reg  = newName "arr_reg"  (* address of array *)
+      let elem_reg = newName "elem_reg" (* address of single element *)
+      let res_reg  = newName "res_reg"
+      let acc_reg = newName "acc_reg"
 
-       let arr_code = compileExp arr_exp vtable arr_reg
-       let header1 = [ Mips.LW(size_reg, arr_reg, "0")]
+      let arr_code = compileExp arr_exp vtable arr_reg
 
-       (* Compile initial value into place (will be updated below) *)
-       let acc_code = compileExp acc_exp vtable place
+      let acc_code = compileExp acc_exp vtable acc_reg
 
-       (* Set arr_reg to address of first element instead. *)
-       (* Set i_reg to 0. While i < size_reg, loop. *)
-       let loop_code =
-                [ Mips.MOVE(ret_reg, place)
-                ; Mips.SW(size_reg, ret_reg, "0")
-                ; Mips.ADDI(arr_reg, arr_reg, "4")
-                ; Mips.ADDI(ret_reg, ret_reg, "4")
-                ; Mips.MOVE(i_reg, "0")
 
-                ; Mips.LABEL(loop_beg)
-                ; Mips.SUB(tmp_reg, i_reg, size_reg)
-                ; Mips.BGEZ(tmp_reg, loop_end)
-                ]
-       (* Load arr[i] into tmp_reg *)
-       let load_code =
-               match getElemSize tp with
-                 | One  -> [ Mips.LB   (tmp_reg, arr_reg, "0")
-                           ; Mips.ADDI (arr_reg, arr_reg, "1")
-                           ]
-                 | Four -> [ Mips.LW   (tmp_reg, arr_reg, "0")
-                           ; Mips.ADDI (arr_reg, arr_reg, "4")
-                           ]
-       let apply_code =
-               applyFunArg(binop, [acc_reg; tmp_reg], vtable, acc_reg, pos)
+      let get_size = [ Mips.LW (size_reg, arr_reg, "0") ]
 
-       let insert_value =
-               match getElemSize tp with
-                 | One  -> [ Mips.LB (ret_reg, acc_reg, "0")
-                           ; Mips.ADDI (ret_reg, ret_reg, "1")
-                           ]
-                 | Four -> [ Mips.LW (ret_reg, acc_reg, "0")
-                           ; Mips.ADDI (ret_reg, ret_reg, "4")
-                           ]
 
-       arr_code
-       @ header1
-       @ acc_code
-       @ dynalloc (size_reg, place, tp)
-       @ loop_code
-       @ load_code
-       @ apply_code
-       @ insert_value @
-               [ Mips.ADDI(i_reg, i_reg, "1")
-               ; Mips.J loop_beg
-               ; Mips.LABEL loop_end
-               ]
+      let addr_reg = newName "addr_reg" (* address of element in new array *)
+      let i_reg = newName "i_reg"
+
+      let init_regs = [ Mips.ADDI (addr_reg, place, "4")
+                      ; Mips.MOVE (i_reg, "0")
+                      ; Mips.ADDI (elem_reg, arr_reg, "4")
+                      ]
+
+      let loop_beg = newName "loop_beg"
+      let loop_end = newName "loop_end"
+      let tmp_reg = newName "tmp_reg"
+
+      let loop_header = [ Mips.LABEL (loop_beg)
+                        ; Mips.SUB (tmp_reg, i_reg, size_reg)
+                        ; Mips.BGEZ (tmp_reg, loop_end) ]
+
+      let loop_scan1 =
+          match getElemSize tp with
+            | One  ->
+                Mips.LB(res_reg, elem_reg, "0")
+                :: applyFunArg(binop, [acc_reg; res_reg], vtable, acc_reg, pos)
+                @ [Mips.MOVE(res_reg, acc_reg)]
+                @ [ Mips.ADDI(elem_reg, elem_reg, "1") ]
+            | Four ->
+                Mips.LW(res_reg, elem_reg, "0")
+                :: applyFunArg(binop, [acc_reg; res_reg], vtable, acc_reg, pos)
+                @ [Mips.MOVE(res_reg, acc_reg)]
+                @ [ Mips.ADDI(elem_reg, elem_reg, "4") ]
+
+      let loop_scan2 =
+              match getElemSize tp with
+                | One  -> [ Mips.SB (res_reg, addr_reg, "0") ]
+                | Four -> [ Mips.SW (res_reg, addr_reg, "0") ]
+
+      let loop_footer =
+          [ Mips.ADDI (addr_reg, addr_reg, makeConst (elemSizeToInt (getElemSize tp)))
+          ; Mips.ADDI (i_reg, i_reg, "1")
+          ; Mips.J loop_beg; Mips.LABEL loop_end]
+
+      arr_code @acc_code
+        @ get_size
+        @ dynalloc (size_reg, place, tp)
+        @ init_regs
+        @ loop_header
+        @ loop_scan1
+        @ loop_scan2
+        @ loop_footer
+
+
 
 and applyFunArg ( ff     : TypedFunArg
                 , args   : Mips.reg list

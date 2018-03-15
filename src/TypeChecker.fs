@@ -338,7 +338,7 @@ and checkExp  (ftab : FunTable)
                                   , pos ))
         if f_res_type = Bool && (Array f_arg_type) = arr_type
         then ( Array elem_type
-             , Filter (f', arr_exp_dec, f_res_type, pos) )
+             , Filter (f', arr_exp_dec, elem_type, pos) )
         else raise (MyError( "Filter: array element types does not match." +
                              ppType f_arg_type + " instead of " + ppType arr_type
                            , pos))

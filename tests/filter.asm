@@ -128,175 +128,229 @@ _false_25_:
 # Function main
 main:
 	sw	$31, -4($29)
+	sw	$22, -32($29)
+	sw	$21, -28($29)
+	sw	$20, -24($29)
 	sw	$19, -20($29)
 	sw	$18, -16($29)
 	sw	$17, -12($29)
 	sw	$16, -8($29)
-	addi	$29, $29, -24
+	addi	$29, $29, -36
 	jal	getint
 # was:	jal	getint, 2
-	ori	$13, $2, 0
+	ori	$10, $2, 0
 # was:	ori	_letBind_27_, 2, 0
-# 	ori	_size_reg_37_,_letBind_27_,0
-	addi	$13, $13, -1
-# was:	addi	_size_reg_37_, _size_reg_37_, -1
-	bgez	$13, _safe_lab_38_
-# was:	bgez	_size_reg_37_, _safe_lab_38_
+# 	ori	_size_reg_34_,_letBind_27_,0
+	addi	$10, $10, -1
+# was:	addi	_size_reg_34_, _size_reg_34_, -1
+	bgez	$10, _safe_lab_35_
+# was:	bgez	_size_reg_34_, _safe_lab_35_
 	ori	$5, $0, 10
 # was:	ori	5, 0, 10
 	j	_IllegalArrSizeError_
-_safe_lab_38_:
-	addi	$13, $13, 1
-# was:	addi	_size_reg_37_, _size_reg_37_, 1
-	ori	$10, $28, 0
-# was:	ori	_arr_reg_29_, 28, 0
-	sll	$11, $13, 2
-# was:	sll	_tmp_44_, _size_reg_37_, 2
-	addi	$11, $11, 4
-# was:	addi	_tmp_44_, _tmp_44_, 4
-	add	$28, $28, $11
-# was:	add	28, 28, _tmp_44_
-	sw	$13, 0($10)
-# was:	sw	_size_reg_37_, 0(_arr_reg_29_)
-	addi	$11, $10, 4
-# was:	addi	_addr_reg_39_, _arr_reg_29_, 4
-	ori	$12, $0, 0
-# was:	ori	_i_reg_40_, 0, 0
-_loop_beg_41_:
-	sub	$14, $12, $13
-# was:	sub	_tmp_reg_43_, _i_reg_40_, _size_reg_37_
-	bgez	$14, _loop_end_42_
-# was:	bgez	_tmp_reg_43_, _loop_end_42_
-	sw	$12, 0($11)
-# was:	sw	_i_reg_40_, 0(_addr_reg_39_)
-	addi	$11, $11, 4
-# was:	addi	_addr_reg_39_, _addr_reg_39_, 4
-	addi	$12, $12, 1
-# was:	addi	_i_reg_40_, _i_reg_40_, 1
-	j	_loop_beg_41_
-_loop_end_42_:
-	lw	$11, 0($10)
-# was:	lw	_size_reg_30_, 0(_arr_reg_29_)
-	addi	$10, $10, 4
-# was:	addi	_arr_reg_29_, _arr_reg_29_, 4
-	ori	$12, $0, 0
-# was:	ori	_ind_var_31_, 0, 0
-_loop_beg_34_:
-	sub	$13, $12, $11
-# was:	sub	_tmp_reg_33_, _ind_var_31_, _size_reg_30_
-	bgez	$13, _loop_end_35_
-# was:	bgez	_tmp_reg_33_, _loop_end_35_
-	lb	$13, 0($10)
-# was:	lb	_tmp_reg_33_, 0(_arr_reg_29_)
+_safe_lab_35_:
 	addi	$10, $10, 1
-# was:	addi	_arr_reg_29_, _arr_reg_29_, 1
-# 	ori	_eq_L_46_,_letBind_28_,0
-	ori	$14, $17, 0
-# was:	ori	_divide_L_50_, _letBind_28_, 0
-	ori	$13, $0, 2
-# was:	ori	_divide_R_51_, 0, 2
-	div	$14, $14, $13
-# was:	div	_times_L_48_, _divide_L_50_, _divide_R_51_
-	ori	$13, $0, 2
-# was:	ori	_times_R_49_, 0, 2
-	mul	$14, $14, $13
-# was:	mul	_eq_R_47_, _times_L_48_, _times_R_49_
+# was:	addi	_size_reg_34_, _size_reg_34_, 1
+	ori	$15, $28, 0
+# was:	ori	_arr_reg_30_, 28, 0
+	sll	$11, $10, 2
+# was:	sll	_tmp_41_, _size_reg_34_, 2
+	addi	$11, $11, 4
+# was:	addi	_tmp_41_, _tmp_41_, 4
+	add	$28, $28, $11
+# was:	add	28, 28, _tmp_41_
+	sw	$10, 0($15)
+# was:	sw	_size_reg_34_, 0(_arr_reg_30_)
+	addi	$11, $15, 4
+# was:	addi	_addr_reg_36_, _arr_reg_30_, 4
 	ori	$13, $0, 0
-# was:	ori	_fun_arg_res_45_, 0, 0
-	bne	$17, $14, _false_52_
-# was:	bne	_eq_L_46_, _eq_R_47_, _false_52_
-	ori	$13, $0, 1
-# was:	ori	_fun_arg_res_45_, 0, 1
-_false_52_:
-	ori	$17, $13, 0
-# was:	ori	_letBind_28_, _fun_arg_res_45_, 0
-	addi	$12, $12, 1
-# was:	addi	_ind_var_31_, _ind_var_31_, 1
-	beq	$17, $0, _loop_beg_34_
-# was:	beq	_letBind_28_, 0, _loop_beg_34_
-	j	_loop_beg_34_
-_loop_end_35_:
-	ori	$11, $17, 0
-# was:	ori	_arr_reg_55_, _letBind_28_, 0
-	lw	$10, 0($11)
-# was:	lw	_size_reg_54_, 0(_arr_reg_55_)
-	ori	$17, $28, 0
-# was:	ori	_letBind_53_, 28, 0
-	sll	$12, $10, 2
-# was:	sll	_tmp_66_, _size_reg_54_, 2
-	addi	$12, $12, 4
-# was:	addi	_tmp_66_, _tmp_66_, 4
-	add	$28, $28, $12
-# was:	add	28, 28, _tmp_66_
-	sw	$10, 0($17)
-# was:	sw	_size_reg_54_, 0(_letBind_53_)
-	addi	$13, $17, 4
-# was:	addi	_addr_reg_58_, _letBind_53_, 4
-	ori	$14, $0, 0
-# was:	ori	_i_reg_59_, 0, 0
-	addi	$15, $11, 4
-# was:	addi	_elem_reg_56_, _arr_reg_55_, 4
-_loop_beg_60_:
-	sub	$11, $14, $10
-# was:	sub	_tmp_reg_62_, _i_reg_59_, _size_reg_54_
-	bgez	$11, _loop_end_61_
-# was:	bgez	_tmp_reg_62_, _loop_end_61_
+# was:	ori	_i_reg_37_, 0, 0
+_loop_beg_38_:
+	sub	$12, $13, $10
+# was:	sub	_tmp_reg_40_, _i_reg_37_, _size_reg_34_
+	bgez	$12, _loop_end_39_
+# was:	bgez	_tmp_reg_40_, _loop_end_39_
+	sw	$13, 0($11)
+# was:	sw	_i_reg_37_, 0(_addr_reg_36_)
+	addi	$11, $11, 4
+# was:	addi	_addr_reg_36_, _addr_reg_36_, 4
+	addi	$13, $13, 1
+# was:	addi	_i_reg_37_, _i_reg_37_, 1
+	j	_loop_beg_38_
+_loop_end_39_:
 	lw	$11, 0($15)
-# was:	lw	_res_reg_57_, 0(_elem_reg_56_)
-# 	ori	_times_L_64_,_res_reg_57_,0
-	ori	$12, $11, 0
-# was:	ori	_times_R_65_, _res_reg_57_, 0
-	mul	$11, $11, $12
-# was:	mul	_fun_arg_res_63_, _times_L_64_, _times_R_65_
-# 	ori	_res_reg_57_,_fun_arg_res_63_,0
+# was:	lw	_size_reg_29_, 0(_arr_reg_30_)
+	ori	$10, $28, 0
+# was:	ori	_letBind_28_, 28, 0
+	sll	$12, $11, 2
+# was:	sll	_tmp_57_, _size_reg_29_, 2
+	addi	$12, $12, 4
+# was:	addi	_tmp_57_, _tmp_57_, 4
+	add	$28, $28, $12
+# was:	add	28, 28, _tmp_57_
+	sw	$11, 0($10)
+# was:	sw	_size_reg_29_, 0(_letBind_28_)
+	addi	$12, $10, 4
+# was:	addi	_addr_reg_42_, _letBind_28_, 4
+	ori	$16, $0, 0
+# was:	ori	_bool_reg_33_, 0, 0
+	ori	$14, $0, 0
+# was:	ori	_i_reg_43_, 0, 0
+	ori	$13, $4, 0
+# was:	ori	_k_reg_44_, 4, 0
 	addi	$15, $15, 4
-# was:	addi	_elem_reg_56_, _elem_reg_56_, 4
-	sw	$11, 0($13)
-# was:	sw	_res_reg_57_, 0(_addr_reg_58_)
-	addi	$13, $13, 4
-# was:	addi	_addr_reg_58_, _addr_reg_58_, 4
+# was:	addi	_elem_reg_31_, _arr_reg_30_, 4
+_loop_beg_45_:
+	sub	$16, $14, $11
+# was:	sub	_tmp_reg_47_, _i_reg_43_, _size_reg_29_
+	bgez	$16, _loop_end_46_
+# was:	bgez	_tmp_reg_47_, _loop_end_46_
+	lw	$18, 0($15)
+# was:	lw	_res_reg_32_, 0(_elem_reg_31_)
+# 	ori	_eq_L_50_,_res_reg_32_,0
+	ori	$17, $18, 0
+# was:	ori	_divide_L_54_, _res_reg_32_, 0
+	ori	$16, $0, 2
+# was:	ori	_divide_R_55_, 0, 2
+	div	$16, $17, $16
+# was:	div	_times_L_52_, _divide_L_54_, _divide_R_55_
+	ori	$17, $0, 2
+# was:	ori	_times_R_53_, 0, 2
+	mul	$17, $16, $17
+# was:	mul	_eq_R_51_, _times_L_52_, _times_R_53_
+	ori	$16, $0, 0
+# was:	ori	_fun_arg_res_49_, 0, 0
+	bne	$18, $17, _false_56_
+# was:	bne	_eq_L_50_, _eq_R_51_, _false_56_
+	ori	$16, $0, 1
+# was:	ori	_fun_arg_res_49_, 0, 1
+_false_56_:
+# 	ori	_bool_reg_33_,_fun_arg_res_49_,0
+	addi	$15, $15, 4
+# was:	addi	_elem_reg_31_, _elem_reg_31_, 4
+	beq	$16, $0, _loop_footer_48_
+# was:	beq	_bool_reg_33_, 0, _loop_footer_48_
+	addi	$13, $13, 1
+# was:	addi	_k_reg_44_, _k_reg_44_, 1
+	sw	$18, 0($12)
+# was:	sw	_res_reg_32_, 0(_addr_reg_42_)
+	addi	$12, $12, 4
+# was:	addi	_addr_reg_42_, _addr_reg_42_, 4
+_loop_footer_48_:
 	addi	$14, $14, 1
-# was:	addi	_i_reg_59_, _i_reg_59_, 1
-	j	_loop_beg_60_
-_loop_end_61_:
-# 	ori	_arr_reg_68_,_letBind_53_,0
-	lw	$19, 0($17)
-# was:	lw	_size_reg_69_, 0(_arr_reg_68_)
-	addi	$17, $17, 4
-# was:	addi	_arr_reg_68_, _arr_reg_68_, 4
+# was:	addi	_i_reg_43_, _i_reg_43_, 1
+	j	_loop_beg_45_
+_loop_end_46_:
+	sw	$13, 0($10)
+# was:	sw	_k_reg_44_, 0(_letBind_28_)
+# 	ori	_arr_reg_60_,_letBind_28_,0
+	lw	$15, 0($10)
+# was:	lw	_size_reg_59_, 0(_arr_reg_60_)
+	ori	$14, $28, 0
+# was:	ori	_letBind_58_, 28, 0
+	sll	$11, $15, 2
+# was:	sll	_tmp_71_, _size_reg_59_, 2
+	addi	$11, $11, 4
+# was:	addi	_tmp_71_, _tmp_71_, 4
+	add	$28, $28, $11
+# was:	add	28, 28, _tmp_71_
+	sw	$15, 0($14)
+# was:	sw	_size_reg_59_, 0(_letBind_58_)
+	addi	$13, $14, 4
+# was:	addi	_addr_reg_63_, _letBind_58_, 4
+	ori	$12, $0, 0
+# was:	ori	_i_reg_64_, 0, 0
+	addi	$11, $10, 4
+# was:	addi	_elem_reg_61_, _arr_reg_60_, 4
+_loop_beg_65_:
+	sub	$10, $12, $15
+# was:	sub	_tmp_reg_67_, _i_reg_64_, _size_reg_59_
+	bgez	$10, _loop_end_66_
+# was:	bgez	_tmp_reg_67_, _loop_end_66_
+	lw	$10, 0($11)
+# was:	lw	_res_reg_62_, 0(_elem_reg_61_)
+	ori	$16, $10, 0
+# was:	ori	_times_L_69_, _res_reg_62_, 0
+# 	ori	_times_R_70_,_res_reg_62_,0
+	mul	$10, $16, $10
+# was:	mul	_fun_arg_res_68_, _times_L_69_, _times_R_70_
+# 	ori	_res_reg_62_,_fun_arg_res_68_,0
+	addi	$11, $11, 4
+# was:	addi	_elem_reg_61_, _elem_reg_61_, 4
+	sw	$10, 0($13)
+# was:	sw	_res_reg_62_, 0(_addr_reg_63_)
+	addi	$13, $13, 4
+# was:	addi	_addr_reg_63_, _addr_reg_63_, 4
+	addi	$12, $12, 1
+# was:	addi	_i_reg_64_, _i_reg_64_, 1
+	j	_loop_beg_65_
+_loop_end_66_:
+	ori	$11, $14, 0
+# was:	ori	_arr_reg_74_, _letBind_58_, 0
+	lw	$17, 0($11)
+# was:	lw	_size_reg_73_, 0(_arr_reg_74_)
+	ori	$16, $28, 0
+# was:	ori	_letBind_72_, 28, 0
+	sll	$10, $17, 2
+# was:	sll	_tmp_86_, _size_reg_73_, 2
+	addi	$10, $10, 4
+# was:	addi	_tmp_86_, _tmp_86_, 4
+	add	$28, $28, $10
+# was:	add	28, 28, _tmp_86_
+	sw	$17, 0($16)
+# was:	sw	_size_reg_73_, 0(_letBind_72_)
+	addi	$19, $16, 4
+# was:	addi	_addr_reg_78_, _letBind_72_, 4
+	ori	$10, $0, 0
+# was:	ori	_bool_reg_77_, 0, 0
 	ori	$18, $0, 0
-# was:	ori	_ind_var_70_, 0, 0
-_loop_beg_73_:
-	sub	$3, $18, $19
-# was:	sub	_tmp_reg_72_, _ind_var_70_, _size_reg_69_
-	bgez	$3, _loop_end_74_
-# was:	bgez	_tmp_reg_72_, _loop_end_74_
-	lb	$3, 0($17)
-# was:	lb	_tmp_reg_72_, 0(_arr_reg_68_)
-	addi	$17, $17, 1
-# was:	addi	_arr_reg_68_, _arr_reg_68_, 1
-	ori	$2, $16, 0
-# was:	ori	2, _letBind_67_, 0
-# 	ori	3,_tmp_reg_72_,0
+# was:	ori	_i_reg_79_, 0, 0
+	ori	$20, $4, 0
+# was:	ori	_k_reg_80_, 4, 0
+	addi	$21, $11, 4
+# was:	addi	_elem_reg_75_, _arr_reg_74_, 4
+_loop_beg_81_:
+	sub	$10, $18, $17
+# was:	sub	_tmp_reg_83_, _i_reg_79_, _size_reg_73_
+	bgez	$10, _loop_end_82_
+# was:	bgez	_tmp_reg_83_, _loop_end_82_
+	lw	$22, 0($21)
+# was:	lw	_res_reg_76_, 0(_elem_reg_75_)
+	ori	$2, $22, 0
+# was:	ori	2, _res_reg_76_, 0
 	jal	isMul16
-# was:	jal	isMul16, 2 3
-	ori	$16, $2, 0
-# was:	ori	_tmp_reg_76_, 2, 0
-# 	ori	_letBind_67_,_tmp_reg_76_,0
+# was:	jal	isMul16, 2
+	ori	$10, $2, 0
+# was:	ori	_tmp_reg_85_, 2, 0
+# 	ori	_bool_reg_77_,_tmp_reg_85_,0
+	addi	$21, $21, 4
+# was:	addi	_elem_reg_75_, _elem_reg_75_, 4
+	beq	$10, $0, _loop_footer_84_
+# was:	beq	_bool_reg_77_, 0, _loop_footer_84_
+	addi	$20, $20, 1
+# was:	addi	_k_reg_80_, _k_reg_80_, 1
+	sw	$22, 0($19)
+# was:	sw	_res_reg_76_, 0(_addr_reg_78_)
+	addi	$19, $19, 4
+# was:	addi	_addr_reg_78_, _addr_reg_78_, 4
+_loop_footer_84_:
 	addi	$18, $18, 1
-# was:	addi	_ind_var_70_, _ind_var_70_, 1
-	beq	$16, $0, _loop_beg_73_
-# was:	beq	_letBind_67_, 0, _loop_beg_73_
-	j	_loop_beg_73_
-_loop_end_74_:
-# 	ori	_arg_77_,_letBind_67_,0
+# was:	addi	_i_reg_79_, _i_reg_79_, 1
+	j	_loop_beg_81_
+_loop_end_82_:
+	sw	$20, 0($16)
+# was:	sw	_k_reg_80_, 0(_letBind_72_)
+# 	ori	_arg_87_,_letBind_72_,0
 	ori	$2, $16, 0
-# was:	ori	2, _arg_77_, 0
+# was:	ori	2, _arg_87_, 0
 	jal	write_int_arr
 # was:	jal	write_int_arr, 2
 # 	ori	_mainres_26_,2,0
 # 	ori	2,_mainres_26_,0
-	addi	$29, $29, 24
+	addi	$29, $29, 36
+	lw	$22, -32($29)
+	lw	$21, -28($29)
+	lw	$20, -24($29)
 	lw	$19, -20($29)
 	lw	$18, -16($29)
 	lw	$17, -12($29)
